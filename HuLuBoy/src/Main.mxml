@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" closing="onShutDown()"  xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="components.*" xmlns:tabs="components.tabs.*" xmlns:monsters="com.demonsters.debugger.*" showStatusBar="false" usePreloader="false" chromeColor="#B2B2B2" contentBackgroundColor="#FFFFFF" initialize="onInit()">
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/halo";
+		s|WindowedApplication {
+			fontSize: 11;
+		}
+		s|Window {
+			fontSize: 11;
+		}
+	</fx:Style>
+	<fx:Script>
+		<![CDATA[
+			import com.demonsters.debugger.IMonsterDebuggerClient;
+			import com.demonsters.debugger.MonsterDebuggerHistory;
+			import com.demonsters.debugger.MonsterDebuggerMenu;
+			import com.demonsters.debugger.MonsterDebuggerUtils;
+			import com.demonsters.debugger.netgroup.NetgroupServer;
+			import com.demonsters.debugger.socket.SocketServer1;
+			import com.demonsters.debugger.socket.SocketServer2;
+			import com.demonsters.utils.OSUtils;
+			
+			import components.plus.TabCloseable;
+			import components.windows.AboutWindow;
+			
+			import controllers.home.HomeController;
+			import controllers.tabs.TabController;
+			
+			import mx.controls.Alert;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+
+
+			// Controllers and basic windows
+			private var home:HomeController;
+			private var tabs:Vector.<TabController> = new Vector.<TabController>();
+			private var aboutWindow:AboutWindow;
+
+
+			/**
+			 * Application is ready
+			 */
+			private function onInit():void
+			{
+				//Modify the cfg file to hack into the swf
+				onStartUp();
+				
+				// Start the servers
+				SocketServer1.initialize();
+				SocketServer1.onClientConnect = onClientConnect;
+				SocketServer2.initialize();
+				SocketServer2.onClientConnect = onClientConnect;
+				NetgroupServer.initialize();
+				NetgroupServer.onClientConnect = onClientConnect;
+				
+
+				// Center window if the window is outside a screen
+				MonsterDebuggerUtils.loadWindowOptions(nativeWindow, "com.demonsters.debugger.MainWindow");
+				
+				// Load history (recent files)
+				MonsterDebuggerHistory.load();
+
+				// Create the home tab
+				home = new HomeController(container);
+
+				// Init the menu
+				MonsterDebuggerMenu.initialize(nativeWindow);
+				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.ALWAYS_ON_TOP, stayOnTop);
+				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.ABOUT_MONSTERS, showAbout);
+				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.EXPORT_CLIENT_SWC, urlHandler);
+				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.EXPORT_CLIENT_MOBILE_SWC, urlHandler);
+				
+				// Close
+				NativeApplication.nativeApplication.addEventListener(Event.EXITING, exitApplication, false, 0, true);
+				nativeWindow.addEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGING, windowStateHandler, false, 0, true);
+				nativeWindow.addEventListener(Event.CLOSING, closeApplication, false, 0, true);
+				
+				container.viewstack.addEventListener(IndexChangedEvent.CHANGE, onTabChange, false, 0, true);
+				container.addEventListener(TabCloseable.CLOSE_TAB, closedTab, false, 0, true);
+				container.addEventListener(TabCloseable.CLOSE_APPLICATION, closeApplication, false, 0, true);
+			}
+			private var mmFilePath:File;
+			private var trustFilePath:File;
+			private function onStartUp():void
+			{
+				var os:String=OSUtils.os();
+				mmFilePath=new File(File.userDirectory.nativePath+"/mm.cfg");
+				if(os=="windows")
+				{
+					trustFilePath=new File(File.userDirectory.nativePath+"/ApplicationData/Macromedia/Flash Player/#Security/FlashPlayerTrust/HuLuTrust.cfg");
+				}
+				else if(os=="mac")
+				{
+					trustFilePath=new File(File.userDirectory.nativePath+"/Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust/HuLuTrust.cfg");
+				}
+				else
+				{
+					Alert.show("The os is not supported, please use the lib.");
+				}
+				clearPreloader(true);
+				var trustFile:FileStream=new FileStream();
+				trustFile.open(trustFilePath,FileMode.WRITE);
+				trustFile.writeUTFBytes(File.applicationDirectory.nativePath+"/preloader");
+				trustFile.close();
+				
+			}
+			private function clearPreloader(flag:Boolean):void
+			{
+				var mmFile:FileStream=new FileStream();
+				mmFile.open(mmFilePath,FileMode.UPDATE);
+				var mm:String=mmFile.readUTFBytes(mmFile.bytesAvailable);
+				var configs:Array=mm.split("\n");
+				for (var i:int = 0; i < configs.length; i++) 
+				{
+					var config:String=configs[i];
+					if(config.indexOf("PreloadSwf=")!=-1)
+						configs.splice(i,1);
+				}
+				if(flag)
+					configs.push("PreloadSwf="+File.applicationDirectory.nativePath+"/preloader/HuLuPreLoader.swf?"+Math.random());
+				mm=configs.join("\n");
+				mmFile.position=0;
+				mmFile.truncate();
+				mmFile.writeUTFBytes(mm);
+				mmFile.close();
+			}
+			private function onShutDown():void
+			{
+				clearPreloader(false);
+				if(trustFilePath.exists)
+				{
+					trustFilePath.deleteFile();
+				}
+			}
+
+			private function stayOnTop(e:Event):void
+			{
+				alwaysInFront = !alwaysInFront;
+			}
+
+
+
+			private function showAbout(e:Event):void
+			{
+				if (aboutWindow == null || aboutWindow.closed) {
+					aboutWindow = new AboutWindow();
+				}
+				aboutWindow.open();
+				aboutWindow.activate();
+			}
+
+			private function onTabChange(e:IndexChangedEvent):void
+			{
+				var i:int = 0;
+				if (tabs.length >= 1 && e.newIndex > 0) {
+					var num:Number = e.newIndex;
+					for (i = 0; i < tabs.length; i++) {
+						tabs[i].active = false;
+					}
+					tabs[num - 1].active = true;
+				} else {
+					for (i = 0; i < tabs.length; i++) {
+						tabs[i].active = false;
+					}
+				}
+			}
+
+			/**
+			 * Created a new tab for the client
+			 */
+			private function onClientConnect(client:IMonsterDebuggerClient):void
+			{
+				var i:int = 0;
+				for (i = 0; i < tabs.length; i++) {
+					if (client.fileLocation == tabs[i].client.fileLocation && client.fileTitle == tabs[i].client.fileTitle) {
+						tabs[i].client = client;
+						return;
+					}
+				}
+				var tab:TabController = new TabController(container, client);
+				tab.active = true;
+				for (i = 0; i < tabs.length; i++) {
+					tabs[i].active = false;
+				}
+
+				tabs.push(tab);
+
+				// Add or check for recent
+				home.addRecent(client);
+			}
+
+
+			private function urlHandler(e:Event):void
+			{
+				switch(e.type) {
+					case MonsterDebuggerMenu.EXPORT_CLIENT_SWC:
+						var originalFile1:File = File.applicationDirectory.resolvePath("export/MonsterDebugger.swc");
+						var file1:File = File.desktopDirectory.resolvePath("MonsterDebugger.swc");
+						file1.addEventListener(Event.SELECT, function(e:Event):void {
+							originalFile1.copyTo(file1, true);
+						});
+						file1.browseForSave("Save MonsterDebugger.swc");
+						break;
+					case MonsterDebuggerMenu.EXPORT_CLIENT_MOBILE_SWC:
+						var originalFile2:File = File.applicationDirectory.resolvePath("export/MonsterDebuggerMobile.swc");
+						var file2:File = File.desktopDirectory.resolvePath("MonsterDebuggerMobile.swc");
+						file2.addEventListener(Event.SELECT, function(e:Event):void {
+							originalFile2.copyTo(file2, true);
+						});
+						file2.browseForSave("Save MonsterDebugger.swc");
+						break;
+				}
+			}
+
+
+			/**
+			 * Tab is closed
+			 */
+			private function closedTab(e:ListEvent):void
+			{
+				var count:int = e.rowIndex;
+				container.removeTab(tabs[e.rowIndex - 1]._tab);
+				tabs[e.rowIndex - 1].clear();
+				tabs.splice(e.rowIndex - 1, 1);
+			}
+			
+			
+			/**
+			 * Main window is maximized, save previous position
+			 */
+			private function windowStateHandler(event:NativeWindowDisplayStateEvent):void
+			{
+				// Save when we maximize
+				if (event.afterDisplayState == NativeWindowDisplayState.MAXIMIZED) {
+					MonsterDebuggerUtils.saveWindowOptions(nativeWindow, "com.demonsters.debugger.MainWindow");
+				}
+			}
+			
+			
+			/**
+			 * Application is closing
+			 */
+			private function closeApplication(e:Event):void
+			{
+				MonsterDebuggerUtils.saveWindowOptions(nativeWindow, "com.demonsters.debugger.MainWindow");
+				SocketServer1.stop();
+				SocketServer2.stop();
+				NetgroupServer.stop();
+				var windows:Array = NativeApplication.nativeApplication.openedWindows;
+				for (var i:int = 0; i < windows.length; i++) {
+					windows[i].close();
+				}
+				NativeApplication.nativeApplication.exit();
+			}
+			private function exitApplication(e:Event):void
+			{
+				SocketServer1.stop();
+				SocketServer2.stop();
+				NetgroupServer.stop();
+				var windows:Array = NativeApplication.nativeApplication.openedWindows;
+				for (var i:int = 0; i < windows.length; i++) {
+					windows[i].close();
+				}
+			}
+	
+			
+			
+		]]>
+	</fx:Script>
+	<tabs:TabContainer id="container" x="0" y="0" width="100%" height="100%"/>
+</s:WindowedApplication>

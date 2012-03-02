@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" width="436" height="585" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="components.*" xmlns:tabs="components.tabs.*" title="About" showStatusBar="false" creationComplete="onCreationComplete()" initialize="onInitialize()" >
+	<fx:Script>
+		<![CDATA[
+
+			import com.demonsters.debugger.MonsterDebuggerMenu;
+			import com.demonsters.debugger.MonsterDebuggerUtils;
+			
+
+			override protected function commitProperties():void
+			{
+				maximizable = false;
+				minimizable = false;
+				resizable = false;
+				super.commitProperties();
+			}
+			
+			
+			private function onInitialize():void
+			{
+				visible = false;
+			}
+			
+			
+			private function onCreationComplete():void
+			{
+				MonsterDebuggerUtils.loadWindowOptions(nativeWindow, "com.demonsters.debugger.AboutWindow");
+				visible = true;
+				
+				// Set on top
+				if (MonsterDebuggerMenu.mainWindow.alwaysInFront) {
+					alwaysInFront = true;
+				}
+				
+				// Add event listener to the stage
+				stage.addEventListener(KeyboardEvent.KEY_UP, function(event:KeyboardEvent):void {
+					if (event.charCode == 27) {
+						close();
+						// The users pressed ESC
+					}
+				});
+				
+				nativeWindow.addEventListener(Event.CLOSING, saveWindowOptions, false, 0, true);
+			}
+			
+			
+			private function saveWindowOptions(e:Event):void
+			{
+				MonsterDebuggerUtils.saveWindowOptions(nativeWindow, "com.demonsters.debugger.AboutWindow");
+			}
+			
+		]]>
+	</fx:Script>
+
+	<mx:Image source="@Embed('../../../assets/hulu.jpg')" scaleContent="false"></mx:Image>
+
+
+</s:Window>

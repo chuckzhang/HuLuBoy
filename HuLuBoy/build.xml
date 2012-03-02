@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="package"> 
+    <!-- SDK properties --> 
+    <property name="SDK_HOME" value="/Users/wenxi/Downloads/AdobeAIRSDK"/> 
+    <property name="ADL" value="${SDK_HOME}/bin/adl"/> 
+    <property name="ADT.JAR" value="${SDK_HOME}/lib/adt.jar"/> 
+ 
+    <!-- Project properties --> 
+    <property name="PROJ_ROOT_DIR" value="."/> 
+    <property name="APP_NAME" value="HuLuBoy"/> 
+    <property name="APP_ROOT_DIR" value="${PROJ_ROOT_DIR}/src"/> 
+    <property name="APP_ROOT_FILE" value="Main.swf"/> 
+    <property name="APP_DESCRIPTOR" value="${PROJ_ROOT_DIR}/src/Main-app.xml"/> 
+    <property name="AIR_NAME" value="${APP_NAME}.air"/> 
+    <property name="release"  location="${PROJ_ROOT_DIR}/release"/> 
+    <property name="export"  location="${PROJ_ROOT_DIR}/export"/> 
+    <property name="icon"  location="${PROJ_ROOT_DIR}/icons"/> 
+    <property name="preloader"  location="${PROJ_ROOT_DIR}/preloader"/> 
+    <property name="STORETYPE" value="pkcs12"/> 
+    <property name="KEYSTORE" value="/Users/wenxi/Documents/VIP File/key.p12"/> 
+     
+    <target name="init" depends="clean"> 
+        <mkdir dir="${release}"/> 
+    </target> 
+ 
+    <target name="run"> 
+        <exec executable="${ADL}"> 
+            <arg value="${APP_DESCRIPTOR}"/> 
+            <arg value="${APP_ROOT_DIR}"/> 
+        </exec>  
+    </target> 
+ 
+    <target name="package" depends="init"> 
+        <java jar="${ADT.JAR}" fork="true" failonerror="true"> 
+            <arg value="-package"/> 
+            <arg value="-storetype"/> 
+            <arg value="${STORETYPE}"/> 
+            <arg value="-keystore"/> 
+            <arg value="${KEYSTORE}"/> 
+            <arg value="${release}/${AIR_NAME}"/> 
+            <arg value="${APP_DESCRIPTOR}"/> 
+            <arg value="-C"/> 
+            <arg value="${APP_ROOT_DIR}"/> 
+            <arg value="${APP_ROOT_FILE}"/> 
+            <arg value="-C"/> 
+            <arg value="${PROJ_ROOT_DIR}"/> 
+            <arg value="${export}"/>
+            <arg value="${icon}"/> 
+            <arg value="${preloader}"/> 
+            
+        </java> 
+    </target> 
+ 
+    <target name="clean" description="clean up"> 
+        <delete dir="${release}"/> 
+    </target> 
+</project>

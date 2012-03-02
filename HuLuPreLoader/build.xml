@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="preloader" default="swf">
+    <target name="swf">
+        
+    </target>
+
+    <target name="swc">
+    </target>
+
+</project>
