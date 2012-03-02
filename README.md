@@ -4,4 +4,4 @@ Install the package HuluBoy.air in HuLuBoy. First open the tools, then open or r
 
 The tool can work in win and mac, but is only tested in mac...
 
-![HuLuBoy](HuLuBoy/assets/hulu.jpg)
+![HuLuBoy](flashinspector/raw/master/HuLuBoy/assets/hulu.jpg)
