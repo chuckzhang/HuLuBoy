@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="package"> 
+    <!-- SDK properties --> 
+    <property environment="env" />
+    <property name="FLEX_HOME" value="${env.FLEX_HOME}" />
+    <property name="ADT" value="${FLEX_HOME}/lib/adt.jar"/> 
+    <property name="ADL" value="${FLEX_HOME}/bin/adl"/>
+    <property name="MXMLC" value="${FLEX_HOME}/lib/mxmlc.jar"/>
+
+    <!-- Project properties --> 
+    <property name="APP_NAME" value="HuLuBoy"/> 
+    <property name="APP_DESCRIPTOR" value="${basedir}/src/HuLuClient-app.xml"/>
+    <property name="STORETYPE" value="pkcs12"/> 
+    <property name="KEYSTORE" value="/Users/wenxi/Documents/VIP File/key.p12"/> 
+
+     <target name="package" depends="release,dopackage,postclean"></target>
+	 <target name="run" depends="debug,dorun,postclean"></target>
+	
+     <target name="dopackage">
+        <java jar="${ADT}" fork="true" failonerror="true">
+            <arg value="-package"/>
+            <arg value="-storetype"/>
+            <arg value="${STORETYPE}"/>
+            <arg value="-keystore"/>
+            <arg value="${KEYSTORE}"/>
+            <arg value="-storepass"/>
+            <arg value="#your password#"/>
+            <arg value="HuLuBoy.air"/>
+            <arg value="${APP_DESCRIPTOR}"/>
+            <arg value="export"/>
+            <arg value="icons"/> 
+            <arg value="preloader"/> 
+
+            <arg value="-C"/>
+            <arg value="${basedir}/release"/>
+            <arg value="HuLuClient.swf"/>
+        </java>
+    </target>
+    <target name="release" depends="clean">
+        <java jar="${MXMLC}" fork="true" failonerror="true" maxmemory="512m">
+            <arg value="-file-specs=${basedir}/src/HuLuClient.mxml"/>
+            <arg value="-output=${basedir}/release/HuLuClient.swf"/>
+            <arg value="-debug=false"/>
+            <arg value="+flexlib=${FLEX_HOME}/frameworks"/>
+            <arg value="+configname=air"/>
+        </java>
+    </target>
+
+    <target name="dorun">
+        <exec executable="${ADL}">
+            <arg value="-runtime"/>
+            <arg value="${FLEX_HOME}/runtimes/air-captive/mac"/>
+            <arg value="${APP_DESCRIPTOR}"/>
+            <arg value="debug"/>
+          </exec> 
+    </target>
+
+    <target name="debug" depends="clean">
+        <java jar="${MXMLC}" fork="true" failonerror="true">
+            <arg value="-debug=true"/>
+            <arg value="+flexlib=${FLEX_HOME}/frameworks"/>
+            <arg value="+configname=air"/>
+            <arg value="-file-specs=${basedir}/src/HuLuClient.mxml"/>
+            <arg value="-output=${basedir}/debug/HuLuClient.swf"/>
+        </java>
+        <copy todir="${basedir}/debug/preloader">
+            <fileset dir="${basedir}/preloader"/>
+        </copy>
+    </target>
+
+   
+
+    <target name="clean" description="clean up">
+        <delete dir="${basedir}/debug"/>
+        <delete dir="${basedir}/release"/>
+    </target>
+	 <target name="postclean">
+	        <delete dir="${basedir}/debug"/>
+	        <delete dir="${basedir}/release"/>
+	    </target>
+ 
+ 
+    
+</project>

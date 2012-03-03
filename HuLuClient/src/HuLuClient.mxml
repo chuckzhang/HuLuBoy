@@ -126,7 +126,7 @@
 						configs.splice(i,1);
 				}
 				if(flag)
-					configs.push("PreloadSwf="+File.applicationDirectory.nativePath+pathSymbol+"preloader"+pathSymbol+"HuLuPreLoader.swf?"+Math.random());
+					configs.push("PreloadSwf="+File.applicationDirectory.nativePath+pathSymbol+"preloader"+pathSymbol+"HuLuPreLoader.swf?t="+Math.random());
 				mm=configs.join("\n");
 				mmFile.position=0;
 				mmFile.truncate();

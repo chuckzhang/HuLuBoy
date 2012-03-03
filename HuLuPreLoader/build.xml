@@ -1,10 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="preloader" default="swf">
-    <target name="swf">
-        
+	<property environment="env" />
+	<property name="FLEX_HOME" value="${env.FLEX_HOME}" />
+	<property name="swfTarget" value="${basedir}/../HuLuClient/preloader/"/>
+	<property name="swcTarget" value="${basedir}/../HuLuClient/export/"/>
+	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+	
+    <target name="swf" depends="cleanswf">
+        <mxmlc file="${basedir}/src/HuLuPreLoader.as" static-link-runtime-shared-libraries="true" output="${swfTarget}/HuLuPreLoader.swf" debug="true"  optimize="true">
+			<library-path dir="${basedir}/libs" append="true">
+				<include name="*.swc" />
+			</library-path>
+			<compiler.headless-server>true</compiler.headless-server>
+			<compiler.define name="CONFIG::Default" value="true"/>
+    		<compiler.define name="CONFIG::Mobile" value="false"/>
+		</mxmlc>
     </target>
 
-    <target name="swc">
+    <target name="swc" depends="mswc">
+    	<compc output="${swcTarget}MonsterDebugger.swc"  optimize="true" debug="false">
+    		<library-path dir="${basedir}/libs" append="true">
+    			<include name="*.swc" />
+    		</library-path>
+    		<compiler.external-library-path dir="${FLEX_HOME}/frameworks/libs">
+	    		<include name="**/*.swc" />
+	    	</compiler.external-library-path>
+    	
+    		<!--compiler.keep-as3-metadata>SecretData</compiler.keep-as3-metadata-->
+    		<compiler.headless-server>true</compiler.headless-server>
+    		<include-sources dir="${basedir}/src" includes="*"/>
+    		<compiler.define name="CONFIG::Default" value="true"/>
+    		<compiler.define name="CONFIG::Mobile" value="false"/>
+			
+    	</compc>
     </target>
+	
+	<target name="mswc" depends="cleanswc">
+	    	<compc output="${swcTarget}MonsterDebuggerMobile.swc" debug="false"  optimize="true">
+	    		
+	    		<library-path dir="${basedir}/libs" append="true">
+	    			<include name="*.swc" />
+	    		</library-path>
+	    		<!--compiler.keep-as3-metadata>SecretData</compiler.keep-as3-metadata-->
+	    		<compiler.headless-server>true</compiler.headless-server>
+	    		<compiler.external-library-path dir="${FLEX_HOME}/frameworks/libs/">
+	    			<include name="**/*.swc" />
+	    		</compiler.external-library-path>
+	    	
+	    		<include-sources dir="${basedir}/src" includes="*"/>
+	    		<compiler.define name="CONFIG::Default" value="false"/>
+    			<compiler.define name="CONFIG::Mobile" value="true"/>
+	    	</compc>
+	    </target>
+	
+	<target name="cleanswf">
+		<delete>
+			<fileset dir="${swfTarget}">
+			    <include name="*.swf"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="cleanswc">
+		<delete>
+			<fileset dir="${swcTarget}">
+			    <include name="*.swc"/>
+			</fileset>
+		</delete>
+	</target>
 
 </project>

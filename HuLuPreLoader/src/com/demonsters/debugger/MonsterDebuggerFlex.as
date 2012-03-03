@@ -43,11 +43,10 @@
 package com.demonsters.debugger
 {
 
-	import mx.core.UIComponent;
-	import mx.logging.Log;
 	import flash.display.DisplayObject;
-
-
+	import mx.core.UIComponent;
+	import mx.logging.*;
+	
 	public class MonsterDebuggerFlex extends UIComponent
 	{
 
@@ -124,11 +123,7 @@ package com.demonsters.debugger
 
 
 import com.demonsters.debugger.MonsterDebugger;
-import mx.logging.AbstractTarget;
-import mx.logging.ILogger;
-import mx.logging.LogEvent;
-import mx.logging.LogEventLevel;
-
+import mx.logging.*;
 
 /**
  * INTERNAL FLEX LOGGER TARGET

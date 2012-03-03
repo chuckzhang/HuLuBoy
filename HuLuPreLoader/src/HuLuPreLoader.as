@@ -6,9 +6,7 @@ package
 	import flash.display.LoaderInfo;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.KeyboardEvent;
 	import flash.system.Security;
-	import flash.ui.Keyboard;
 	
 	public class HuLuPreLoader extends Sprite
 	{
@@ -17,22 +15,44 @@ package
 			Security.allowDomain("*");
 			Security.allowInsecureDomain("*");
 			this.root.addEventListener("allComplete", allCompleteHandler);
+			
+			//decode url to get the filter
+			var url:String=loaderInfo.loaderURL;
+			try
+			{
+				var params:Array=url.split("?")[1].split("&");
+				for each(var param:String in params)
+				{
+					var index:int=param.indexOf("f=");
+					if(index!=-1)
+					{
+						filter=param.replace("f=","");
+					}
+				}
+			}
+			catch(e:Error)
+			{
+				
+			}
 		}
 		
 		public static var mainRoot:DisplayObject;
-		
+		private var filter:String="";
 		
 		protected function allCompleteHandler(event:Event):void
 		{
 			var loadInfo:LoaderInfo=event.target as LoaderInfo;
-			if(loadInfo)
+			if(loadInfo && loadInfo.url)
 			{
-				//the target is not preloader himself && load file is a swf && the swf is main swf 
-				if(loadInfo.url.indexOf("HuLuPreLoader.swf") == -1 && loadInfo.contentType == "application/x-shockwave-flash" && loadInfo.url==loadInfo.loaderURL)
+				//the target isn't preloader himself &&the target isn't debugger && load file is a swf && the swf is main swf 
+				if(loadInfo.url.indexOf("HuLuPreLoader.swf") == -1&& loadInfo.url.indexOf("app:/HuLuClient.swf")==-1&& loadInfo.contentType == "application/x-shockwave-flash" && loadInfo.url==loadInfo.loaderURL)
 				{
-					mainRoot=loadInfo.content.root;
-					MonsterDebugger.initialize(mainRoot);
-					MonsterDebugger.trace(mainRoot,"Debugger Ready.");
+					if(loadInfo.url.indexOf(filter)!=-1)//the swf fit the filter
+					{
+						mainRoot=loadInfo.content.root;
+						MonsterDebugger.initialize(mainRoot);
+						MonsterDebugger.trace(mainRoot,"Debugger Ready.");
+					}
 				}
 			}
 		}

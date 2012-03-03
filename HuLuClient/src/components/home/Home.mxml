@@ -18,10 +18,14 @@
 		<mx:Canvas  width="100%"  minWidth="400" height="100%" verticalScrollPolicy="auto" horizontalScrollPolicy="off" verticalScrollBarStyleName="customScrollBarStyle">
 			<s:VGroup x="0" y="0" width="100%" height="100%" id="groupHome" paddingRight="20" paddingLeft="20" >
 				<s:SkinnableContainer width="100%">
-					<s:Label text="Start" fontSize="13" fontStyle="italic" fontWeight="bold" y="28" left="15"/>
-					<s:Button id="buttonStart" label="Include debug library into project" skinClass="skins.button.iconButtons.WizzardButton" y="45" left="12"/>
-					<s:Label text="Recent files" fontSize="13" fontStyle="italic" fontWeight="bold" y="100" left="15"/>
-					<s:Group id="recentSessions" y="117" left="12">
+					<s:Label text="Start" fontSize="13" fontStyle="italic" fontWeight="bold" y="28" left="15" toolTip="Fill a filter to debug a specified swf or leave it blank to debug any swf."/>
+							<s:Label text="Filter:" left="75" y="55"/>
+							<s:TextInput id="filter" y="50" left="105"/>
+							<s:ToggleButton  width="45"  skinClass="skins.button.HuLuButton" id="switcher" selected="true" left="15" y="50" label="{switcher.selected?'On':'Off'}"/>
+					<s:Label text="Library" fontSize="13" fontStyle="italic" fontWeight="bold" y="80" left="15" toolTip="If you can't debug automatically then include the swc into your project."/>
+					<s:Button id="buttonStart" label="Include debug library into project" skinClass="skins.button.iconButtons.WizzardButton" y="100" left="12"/>
+					<s:Label text="Recent files" fontSize="13" fontStyle="italic" fontWeight="bold" y="135" left="15" toolTip="Recent debug file"/>
+					<s:Group id="recentSessions" y="152" left="12">
 						<s:layout>
 							<s:VerticalLayout gap="0"/>
 						</s:layout>

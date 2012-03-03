@@ -1,21 +1,28 @@
 package controllers.home
 {
-	import components.home.Home;
-	import components.home.HomeRecentItem;
-	import components.tabs.TabContainer;
-	import spark.events.IndexChangeEvent;
 	import com.demonsters.debugger.IMonsterDebuggerClient;
 	import com.demonsters.debugger.MonsterDebuggerConstants;
 	import com.demonsters.debugger.MonsterDebuggerHistory;
 	import com.demonsters.debugger.MonsterDebuggerHistoryItem;
-	import mx.events.FlexEvent;
+	import com.demonsters.utils.OSUtils;
+	
+	import components.home.Home;
+	import components.home.HomeRecentItem;
+	import components.tabs.TabContainer;
+	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.system.System;
+	
+	import mx.events.FlexEvent;
+	
+	import spark.events.IndexChangeEvent;
 
 
 	public final class HomeController extends EventDispatcher
@@ -53,8 +60,59 @@ package controllers.home
 			_tab.buttonExport.addEventListener(MouseEvent.CLICK, clickHandler, false, 0, true);
 			_tab.dropdownTarget.addEventListener(IndexChangeEvent.CHANGE, selectedTarget, false, 0, true);
 			_tab.dropdownType.addEventListener(IndexChangeEvent.CHANGE, selectedType, false, 0, true);
+			_tab.filter.addEventListener(FlexEvent.ENTER,onFilterEnter,false,0,true);
+			_tab.switcher.addEventListener(MouseEvent.CLICK,onSwitch,false,0,true);
 		}
-
+		//开关打开关闭		
+		protected function onSwitch(event:MouseEvent):void
+		{
+			if(_tab.switcher.selected)
+				changeMMFile(true);
+			else
+				changeMMFile(false);
+		}
+		//监控条件
+		protected function onFilterEnter(event:FlexEvent):void
+		{
+			if(_tab.switcher.selected)
+				changeMMFile(true);
+		}
+		//变更mm.cfg
+		private function changeMMFile(update:Boolean):void
+		{
+			var os:String=OSUtils.os();
+			var pathSymbol:String;
+			var mmFilePath:File=new File(File.userDirectory.nativePath+"/mm.cfg");
+			if(os=="xp")
+			{
+				pathSymbol="\\";
+			}
+			else if(os=="win7")
+			{
+				pathSymbol="\\";
+			}
+			else if(os=="mac")
+			{
+				pathSymbol="/";
+			}
+			var mmFile:FileStream=new FileStream();
+			mmFile.open(mmFilePath,FileMode.UPDATE);
+			var mm:String=mmFile.readUTFBytes(mmFile.bytesAvailable);
+			var configs:Array=mm.split("\n");
+			for (var i:int = 0; i < configs.length; i++) 
+			{
+				var config:String=configs[i];
+				if(config.indexOf("PreloadSwf=")!=-1)
+					configs.splice(i,1);
+			}
+			if(update)
+				configs.push("PreloadSwf="+File.applicationDirectory.nativePath+pathSymbol+"preloader"+pathSymbol+"HuLuPreLoader.swf?t="+Math.random()+"&f="+_tab.filter.text);
+			mm=configs.join("\n");
+			mmFile.position=0;
+			mmFile.truncate();
+			mmFile.writeUTFBytes(mm);
+			mmFile.close();
+		}
 
 		/**
 		 * Button clicked

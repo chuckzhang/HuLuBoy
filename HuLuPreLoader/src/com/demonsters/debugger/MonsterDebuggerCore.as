@@ -596,6 +596,7 @@ package com.demonsters.debugger
 					inspect(HuLuPreLoader.mainRoot);
 					send({command:MonsterDebuggerConstants.COMMAND_STOP_HIGHLIGHT});
 				break;
+				
 			}
 		}
 		
