@@ -19,15 +19,22 @@ package
 			this.root.addEventListener("allComplete", allCompleteHandler);
 		}
 		
+		public static var mainRoot:DisplayObject;
 		
-		private var mainRoot:DisplayObject;
 		
 		protected function allCompleteHandler(event:Event):void
 		{
 			var loadInfo:LoaderInfo=event.target as LoaderInfo;
-			mainRoot=loadInfo.content.root;
-			MonsterDebugger.initialize(mainRoot);
-			MonsterDebugger.trace(mainRoot,"Debugger Ready.");
+			if(loadInfo)
+			{
+				//the target is not preloader himself && load file is a swf && the swf is main swf 
+				if(loadInfo.url.indexOf("HuLuPreLoader.swf") == -1 && loadInfo.contentType == "application/x-shockwave-flash" && loadInfo.url==loadInfo.loaderURL)
+				{
+					mainRoot=loadInfo.content.root;
+					MonsterDebugger.initialize(mainRoot);
+					MonsterDebugger.trace(mainRoot,"Debugger Ready.");
+				}
+			}
 		}
 	}
 }

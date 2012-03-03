@@ -82,16 +82,24 @@
 			}
 			private var mmFilePath:File;
 			private var trustFilePath:File;
+			private var pathSymbol:String;
 			private function onStartUp():void
 			{
 				var os:String=OSUtils.os();
 				mmFilePath=new File(File.userDirectory.nativePath+"/mm.cfg");
-				if(os=="windows")
+				if(os=="xp")
 				{
-					trustFilePath=new File(File.userDirectory.nativePath+"/ApplicationData/Macromedia/Flash Player/#Security/FlashPlayerTrust/HuLuTrust.cfg");
+					pathSymbol="\\";
+					trustFilePath=new File(File.userDirectory.nativePath+"/Application Data/Macromedia/Flash Player/#Security/FlashPlayerTrust/HuLuTrust.cfg");
+				}
+				else if(os=="win7")
+				{
+					pathSymbol="\\";
+					trustFilePath=new File(File.userDirectory.nativePath+"/AppData/Roaming/Macromedia/Flash Player/#Security/FlashPlayerTrust/HuLuTrust.cfg");
 				}
 				else if(os=="mac")
 				{
+					pathSymbol="/";
 					trustFilePath=new File(File.userDirectory.nativePath+"/Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust/HuLuTrust.cfg");
 				}
 				else
@@ -101,7 +109,7 @@
 				clearPreloader(true);
 				var trustFile:FileStream=new FileStream();
 				trustFile.open(trustFilePath,FileMode.WRITE);
-				trustFile.writeUTFBytes(File.applicationDirectory.nativePath+"/preloader");
+				trustFile.writeUTFBytes(File.applicationDirectory.nativePath+pathSymbol+"preloader");
 				trustFile.close();
 				
 			}
@@ -118,7 +126,7 @@
 						configs.splice(i,1);
 				}
 				if(flag)
-					configs.push("PreloadSwf="+File.applicationDirectory.nativePath+"/preloader/HuLuPreLoader.swf?"+Math.random());
+					configs.push("PreloadSwf="+File.applicationDirectory.nativePath+pathSymbol+"preloader"+pathSymbol+"HuLuPreLoader.swf?"+Math.random());
 				mm=configs.join("\n");
 				mmFile.position=0;
 				mmFile.truncate();

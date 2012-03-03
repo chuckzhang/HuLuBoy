@@ -8,8 +8,10 @@ package com.demonsters.utils
 			{
 				var osInfo:String=Capabilities.os;
 				osInfo=osInfo.toLowerCase();
-				if(osInfo.indexOf("windows")!=-1)
-					return "windows";
+				if(osInfo.indexOf("windows xp")!=-1)
+					return "xp";
+				else if(osInfo.indexOf("windows")!=-1)
+					return "win7";
 				else if(osInfo.indexOf("mac")!=-1)
 					return "mac";
 				else

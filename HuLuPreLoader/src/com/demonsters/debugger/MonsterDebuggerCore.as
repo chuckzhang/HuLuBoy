@@ -563,17 +563,16 @@ package com.demonsters.debugger
 						}
 						if (_stage != null) {
 							highlightClear();
-							send({command:MonsterDebuggerConstants.COMMAND_STOP_HIGHLIGHT});
+							//send({command:MonsterDebuggerConstants.COMMAND_STOP_HIGHLIGHT});
 							_highlight.removeEventListener(MouseEvent.CLICK, highlightClicked);
 							_highlight.mouseEnabled = false;
-							_base.stage.removeEventListener(KeyboardEvent.KEY_UP,onCancelSelect);
+							//_base.stage.removeEventListener(KeyboardEvent.KEY_UP,onCancelSelect);
 							highlightTarget = DisplayObject(obj);
 							_highlightMouse = false;
 							_highlightUpdate = true;
 						}
 					}
 				break;
-				
 				// Show the highlight
 				case MonsterDebuggerConstants.COMMAND_START_HIGHLIGHT:
 					highlightClear();
@@ -594,6 +593,7 @@ package com.demonsters.debugger
 					highlightTarget = null;
 					_highlightMouse = false;
 					_highlightUpdate = false;
+					inspect(HuLuPreLoader.mainRoot);
 					send({command:MonsterDebuggerConstants.COMMAND_STOP_HIGHLIGHT});
 				break;
 			}
