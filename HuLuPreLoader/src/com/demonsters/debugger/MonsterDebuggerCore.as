@@ -893,7 +893,7 @@ package com.demonsters.debugger
 		 * @param data: The data to send
 		 * @param direct: Use the queue or send direct (handshake)
 		 */
-		private static function send(data:Object, direct:Boolean = false):void
+		internal static function send(data:Object, direct:Boolean = false):void
 		{
 			if (MonsterDebugger.enabled) {
 				MonsterDebuggerConnection.send(MonsterDebuggerCore.ID, data, direct);

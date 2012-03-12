@@ -1,11 +1,16 @@
 package
 {
 	import com.demonsters.debugger.MonsterDebugger;
+	import com.etm.core.etm_internal;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
 	import flash.display.LoaderInfo;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.system.ApplicationDomain;
 	import flash.system.Security;
 	
 	public class HuLuPreLoader extends Sprite
@@ -14,29 +19,13 @@ package
 		{
 			Security.allowDomain("*");
 			Security.allowInsecureDomain("*");
-			this.root.addEventListener("allComplete", allCompleteHandler);
-			
-			//decode url to get the filter
-			var url:String=loaderInfo.loaderURL;
-			try
-			{
-				var params:Array=url.split("?")[1].split("&");
-				for each(var param:String in params)
-				{
-					var index:int=param.indexOf("f=");
-					if(index!=-1)
-					{
-						filter=param.replace("f=","");
-					}
-				}
-			}
-			catch(e:Error)
-			{
-				
-			}
+			root.addEventListener("allComplete", allCompleteHandler);
+			var params:Object=loaderInfo.parameters;
+			filter=params["f"]||"";
 		}
 		
 		public static var mainRoot:DisplayObject;
+		
 		private var filter:String="";
 		
 		protected function allCompleteHandler(event:Event):void
@@ -50,8 +39,18 @@ package
 					if(loadInfo.url.indexOf(filter)!=-1)//the swf fit the filter
 					{
 						mainRoot=loadInfo.content.root;
-						MonsterDebugger.initialize(mainRoot);
-						MonsterDebugger.trace(mainRoot,"Debugger Ready.");
+						if(mainRoot.stage)
+						{
+							MonsterDebugger.initialize(mainRoot);
+							MonsterDebugger.trace(mainRoot,"Debugger Ready.");
+							MonsterDebugger.etm_internal::send({command:"params",data:loadInfo.parameters});
+						}
+						else
+						{
+							MonsterDebugger.initialize(this);
+							MonsterDebugger.inspect(mainRoot);
+							MonsterDebugger.trace(mainRoot,"Can't retrieve the stage.");
+						}
 					}
 				}
 			}
