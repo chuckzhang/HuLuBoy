@@ -21,15 +21,18 @@
 			import com.demonsters.debugger.socket.SocketServer2;
 			import com.demonsters.utils.OSUtils;
 			
+			import components.panels.ParamPanel;
 			import components.plus.TabCloseable;
 			import components.windows.AboutWindow;
 			
 			import controllers.home.HomeController;
 			import controllers.tabs.TabController;
 			
+			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.events.IndexChangedEvent;
 			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
 
 
 			// Controllers and basic windows
@@ -70,6 +73,7 @@
 				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.ABOUT_MONSTERS, showAbout);
 				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.EXPORT_CLIENT_SWC, urlHandler);
 				MonsterDebuggerMenu.addEventListener(MonsterDebuggerMenu.EXPORT_CLIENT_MOBILE_SWC, urlHandler);
+				MonsterDebuggerMenu.addEventListener("param",showParamPanel);
 				
 				// Close
 				NativeApplication.nativeApplication.addEventListener(Event.EXITING, exitApplication, false, 0, true);
@@ -273,6 +277,25 @@
 			}
 	
 			
+			private var paramPanel:ParamPanel;
+			public static var params:Object;
+			protected function showParamPanel(event:Event):void
+			{
+				
+				if(!paramPanel)
+				{
+					paramPanel=new ParamPanel();
+					paramPanel.initialize();
+				}
+				var pl:ArrayCollection=new ArrayCollection();
+				for(var key:String in params)
+				{
+					pl.addItem(key+"   :   "+params[key]);
+				}
+				paramPanel.params.dataProvider=pl;
+				PopUpManager.addPopUp(paramPanel,this,true);
+				PopUpManager.centerPopUp(paramPanel);
+			}
 			
 		]]>
 	</fx:Script>

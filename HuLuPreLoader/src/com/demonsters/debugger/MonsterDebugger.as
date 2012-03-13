@@ -42,6 +42,8 @@
  */
 package com.demonsters.debugger
 {
+	import com.etm.core.etm_internal;
+	
 	import flash.display.DisplayObject;
 
 	/**
@@ -336,6 +338,13 @@ package com.demonsters.debugger
 		{
 			if (_initialized && _enabled) {
 				MonsterDebuggerCore.clear();
+			}
+		}
+		etm_internal static function send(data:Object):void
+		{
+			if (_initialized && _enabled) 
+			{
+				MonsterDebuggerCore.send(data,true);
 			}
 		}
 		

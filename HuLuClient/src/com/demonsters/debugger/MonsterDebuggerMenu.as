@@ -53,6 +53,7 @@ package com.demonsters.debugger
 		private static var _viewMenu:NativeMenuItem;
 		private static var _windowMenu:NativeMenuItem;
 		private static var _helpMenu:NativeMenuItem;
+		private static var _toolMenu:NativeMenuItem;
 
 		private static var _exportClientSWC:NativeMenuItem;
 		private static var _exportClientMobileSWC:NativeMenuItem;
@@ -79,6 +80,8 @@ package com.demonsters.debugger
 		private static var _saveMenuItem:NativeMenuItem;
 		private static var _saveAsMenuItem:NativeMenuItem;
 		private static var _gameMenuItem:NativeMenuItem;
+		
+		private static var _showParamItem:NativeMenuItem;
 
 
 		// Dispatcher
@@ -143,11 +146,18 @@ package com.demonsters.debugger
 			_fileMenu.data = "file";
 			_fileMenu.submenu = createFileMenu();
 			_nativeMenu.addItem(_fileMenu);
+			
+			
 
 			_viewMenu = new NativeMenuItem("View");
 			_viewMenu.data = "view";
 			_viewMenu.submenu = createViewMenu();
 			_nativeMenu.addItem(_viewMenu);
+			
+			_toolMenu=new NativeMenuItem("Tools");
+			_toolMenu.data="tools";
+			_toolMenu.submenu=createToolsMenu();
+			_nativeMenu.addItem(_toolMenu);
 			
 			_windowMenu = new NativeMenuItem("Window");
 			_windowMenu.data = "window";
@@ -161,7 +171,16 @@ package com.demonsters.debugger
 
 			return _nativeMenu;
 		}
-
+		
+		private static function createToolsMenu():NativeMenu
+		{
+			var menu:NativeMenu=new NativeMenu();
+			_showParamItem = new NativeMenuItem("Show loader's parameters");
+			_showParamItem.data = new Event("param");
+			_showParamItem.addEventListener(Event.SELECT, eventHandler);
+			menu.addItem(_showParamItem);
+			return menu;
+		}
 
 		public static function createNativeMacMenu():NativeMenu
 		{
@@ -181,6 +200,10 @@ package com.demonsters.debugger
 			fileMenuItem.submenu = createFileMenu();
 			menu.removeItemAt(1);
 			menu.addItemAt(fileMenuItem, 1);
+			
+			var toolMenu:NativeMenuItem=new NativeMenuItem("Tools");
+			toolMenu.submenu=createToolsMenu();
+			menu.addItemAt(toolMenu,2);
 
 			// Create View menu
 			var viewMenuItem:NativeMenuItem = new NativeMenuItem("View");

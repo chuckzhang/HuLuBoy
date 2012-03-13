@@ -3,6 +3,7 @@ package com.demonsters.debugger.socket
 	import com.demonsters.debugger.IMonsterDebuggerClient;
 	import com.demonsters.debugger.MonsterDebuggerConstants;
 	import com.demonsters.debugger.MonsterDebuggerData;
+	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
@@ -223,6 +224,10 @@ package com.demonsters.debugger.socket
 				// Send the started command
 				if (_onStart != null) _onStart(this);
 				return;
+			}
+			else if(item.data["command"]=="params")
+			{
+				HuLuClient.params=item.data.data;
 			}
 
 			// Call the data handler
