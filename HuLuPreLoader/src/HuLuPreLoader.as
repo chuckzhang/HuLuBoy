@@ -25,6 +25,7 @@ package
 		}
 		
 		public static var mainRoot:DisplayObject;
+		private var oldStage:Stage;
 		
 		private var filter:String="";
 		
@@ -44,12 +45,6 @@ package
 							MonsterDebugger.initialize(mainRoot);
 							MonsterDebugger.trace(mainRoot,"Debugger Ready.");
 							MonsterDebugger.etm_internal::send({command:"params",data:loadInfo.parameters});
-						}
-						else
-						{
-							MonsterDebugger.initialize(this);
-							MonsterDebugger.inspect(mainRoot);
-							MonsterDebugger.trace(mainRoot,"Can't retrieve the stage.");
 						}
 					}
 				}
