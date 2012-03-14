@@ -11,7 +11,7 @@
     <property name="APP_NAME" value="HuLuBoy"/> 
     <property name="APP_DESCRIPTOR" value="${basedir}/src/HuLuClient-app.xml"/>
     <property name="STORETYPE" value="pkcs12"/> 
-    <property name="KEYSTORE" value="/Users/wenxi/Documents/VIP File/key.p12"/> 
+    <property name="KEYSTORE" value="F:/key.p12"/> 
 
      <target name="package" depends="release,dopackage,postclean"></target>
 	 <target name="run" depends="debug,dorun,postclean"></target>

@@ -34,6 +34,7 @@ package com.demonsters.debugger
 		public static const COMMAND_MONITOR:String = "MONITOR";
 		public static const COMMAND_SNAPSHOT:String = "SNAPSHOT";
 		public static const COMMAND_NOTFOUND:String = "NOTFOUND";
+		public static const COMMAND_LOADER_INFO        :String = "LOADER_INFO";
 		
 		
 		// Types

@@ -10,6 +10,8 @@ package com.demonsters.debugger.socket
 	import flash.events.SecurityErrorEvent;
 	import flash.net.Socket;
 	import flash.utils.ByteArray;
+	
+	import mx.controls.Alert;
 
 
 	public final class SocketClient implements IMonsterDebuggerClient
@@ -225,11 +227,11 @@ package com.demonsters.debugger.socket
 				if (_onStart != null) _onStart(this);
 				return;
 			}
-			else if(item.data["command"]=="params")
+			else if(item.data["command"]==MonsterDebuggerConstants.COMMAND_LOADER_INFO)
 			{
-				HuLuClient.params=item.data.data;
+				HuLuClient.li=item.data.data;
 			}
-
+			
 			// Call the data handler
 			if (_onData != null) {
 				_onData(item);

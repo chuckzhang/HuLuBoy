@@ -43,8 +43,12 @@ package
 						if(mainRoot.stage)
 						{
 							MonsterDebugger.initialize(mainRoot);
-							MonsterDebugger.trace(mainRoot,"Debugger Ready.");
-							MonsterDebugger.etm_internal::send({command:"params",data:loadInfo.parameters});
+							MonsterDebugger.trace(mainRoot,"Debugger Ready.","","INFO");
+						}
+						else
+						{
+							MonsterDebugger.initialize(mainRoot);
+							MonsterDebugger.trace(mainRoot,"Can not retrieve the target stage.","","ERROR",0xff0000);
 						}
 					}
 				}

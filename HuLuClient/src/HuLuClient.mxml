@@ -278,7 +278,7 @@
 	
 			
 			private var paramPanel:ParamPanel;
-			public static var params:Object;
+			public static var li:Object;
 			protected function showParamPanel(event:Event):void
 			{
 				
@@ -288,9 +288,9 @@
 					paramPanel.initialize();
 				}
 				var pl:ArrayCollection=new ArrayCollection();
-				for(var key:String in params)
+				for(var key:String in li)
 				{
-					pl.addItem(key+"   :   "+params[key]);
+					pl.addItem(key+"   :   "+li[key]);
 				}
 				paramPanel.params.dataProvider=pl;
 				PopUpManager.addPopUp(paramPanel,this,true);

@@ -102,11 +102,17 @@ package com.demonsters.debugger
 
 				// Start our engines
 				MonsterDebuggerCore.base = base;
-				MonsterDebuggerCore.initialize();
+				if(base.stage)
+				{
+					MonsterDebuggerCore.initialize();
+				}
 				MonsterDebuggerConnection.initialize();
 				MonsterDebuggerConnection.address = address;
 				MonsterDebuggerConnection.connect();
-				
+				if(base.stage)
+				{
+					MonsterDebugger.etm_internal::send({command:MonsterDebuggerConstants.COMMAND_LOADER_INFO,data:base.stage.loaderInfo.parameters});
+				}
 				// Start the sampler
 				// try{
 				// var SampleClass:* = getDefinitionByName("flash.sampler::Sample");

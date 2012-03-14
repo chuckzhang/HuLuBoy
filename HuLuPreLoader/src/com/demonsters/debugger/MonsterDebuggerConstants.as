@@ -43,7 +43,6 @@
 package com.demonsters.debugger
 {
 
-
 	/**
 	 * @private
 	 * The Monster Debugger constants.
@@ -73,6 +72,8 @@ package com.demonsters.debugger
 		internal static const COMMAND_SAMPLES				:String = "SAMPLES";
 		internal static const COMMAND_SNAPSHOT				:String = "SNAPSHOT";
 		internal static const COMMAND_NOTFOUND				:String = "NOTFOUND";
+		
+		internal static const COMMAND_LOADER_INFO        :String = "LOADER_INFO";
 		
 		
 		// Types
