@@ -7,5 +7,3 @@ Install the package HuluBoy.air. First open the tools, then open or reload the s
 The tool can work in win and mac.
 
 some project can't be debuged direcly by this tools, but you can include the swc into your project to avoid that.
-
-![HuLuBoy](HuLuBoy/raw/master/HuLuClient/assets/hulu.jpg)
